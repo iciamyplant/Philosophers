@@ -34,7 +34,7 @@ typedef	struct			s_p
 	t_arg              a; // arguments
     long int           s; // start time in seconds
     int                ms; // start time in microseconds
-    t_philo            *ph; // structure pour chaque philosophe
+    t_philo            *ph; // structure for each philosophe
 }	                        t_p;
 
 /*

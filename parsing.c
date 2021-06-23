@@ -39,6 +39,7 @@ int    parse_args(int argc, char **argv, t_p *p)
         p->a.die = ft_atoi(argv[2]);
         p->a.eat = ft_atoi(argv[3]);
         p->a.sleep = ft_atoi(argv[4]);
+        p->a.m_eat = 0;
         if (argc == 6)
             p->a.m_eat = ft_atoi(argv[5]);
         return (1);

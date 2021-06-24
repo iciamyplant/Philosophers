@@ -1,16 +1,5 @@
 #include "philo.h"
 
-void    *myThreadFun(void *data)
-{
-    t_philo *ph;
-
-    ph = (t_philo *)data;
-    //printf("id = %d\n", ph->id);
-    //printf("total = %d\n", ph->pa->total);
-    eating(ph);
-    return NULL;
-}
-
 void    threading(t_p *p)
 {
     int i;

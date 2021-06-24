@@ -30,17 +30,18 @@ typedef	struct              s_philo
 {
 	int                     id;
     pthread_t               thread_id;
-    pthread_mutex_t         r_f; // right fork
-    pthread_mutex_t         l_f; // left fork
-    int                     r_fid; // the id of the last philosopher who used this fork
-    int                     l_fid; // the id of the last philosopher who used this fork
-    t_arg                   *pa;
+    pthread_mutex_t         r_f;    // right fork
+    pthread_mutex_t         l_f;    // left fork
+    int                     r_fid;  // the id of the last philosopher who used this fork
+    int                     l_fid;  // the id of the last philosopher who used this fork
+    t_arg                   *pa;    // pointer to structure with all arguments
+    int                     ms_eat; // time of eat, changing each time when philospher is eating
 }                           t_philo;
 
 typedef	struct              s_p
 {
-    t_philo                 *ph; // structure for each philosophe
-    t_arg                   a;   //structure with arguments, same for all philosophers
+    t_philo                 *ph;    // structure for each philosophe
+    t_arg                   a;      //structure with arguments, same for all philosophers
 }                           t_p;
 
 /*
@@ -48,8 +49,8 @@ typedef	struct              s_p
 */
 
 int     parse_args(int argc, char **argv, t_p *p);
-void    eating(t_philo *ph);
 int     initialize(t_p *p);
+void    *myThreadFun(void *data);
 int     ft_exit(char *str);
 
 #endif

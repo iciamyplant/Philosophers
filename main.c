@@ -2,11 +2,12 @@
 
 void    *myThreadFun(void *data)
 {
-    t_p *p;
+    t_philo *ph;
 
-    p = (t_p*)data;
-    eating(p);
-    printf("ca rentre\n");
+    ph = (t_philo *)data;
+    //printf("id = %d\n", ph->id);
+    //printf("total = %d\n", ph->pa->total);
+    eating(ph);
     return NULL;
 }
 
@@ -18,8 +19,9 @@ void    threading(t_p *p)
     printf("Before Thread\n");
     while (i < p->a.total)
     {
-        // pthread_create(&p->ph[i].thread_id, NULL, myThreadFun, (void *)ph[i]);
-        pthread_create(&p->ph[i].thread_id, NULL, myThreadFun, (void *)p);
+        p->ph[i].pa = &p->a;
+        pthread_create(&p->ph[i].thread_id, NULL, myThreadFun, &p->ph[i]);
+        //pthread_create(&p->ph[i].thread_id, NULL, myThreadFun, (void *)p);
         i++;
     }
     sleep(3);
@@ -37,4 +39,5 @@ int     main(int argc, char **argv)
     if (!(initialize(&p)))
         return (ft_exit("Gettimeofday error"));
     threading(&p);
+    sleep(1);
 }

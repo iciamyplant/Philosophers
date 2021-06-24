@@ -27,6 +27,8 @@ typedef	struct			s_philo
 {
 	int                 id;
     pthread_t           thread_id;
+    pthread_mutex_t     r_f; // right fork
+    pthread_mutex_t     l_f; // left fork
 }	                        t_philo;
 
 typedef	struct			s_p
@@ -41,6 +43,9 @@ typedef	struct			s_p
 ** functions
 */
 
-int    parse_args(int argc, char **argv, t_p *p);
+int     parse_args(int argc, char **argv, t_p *p);
+void    eating(t_p *p);
+int     initialize(t_p *p);
+int     ft_exit(char *str);
 
 #endif

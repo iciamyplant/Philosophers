@@ -12,34 +12,52 @@ void	ft_putstr_fd(char *s, int fd)
 	{
 		while (s && *s)
 		{
-			ft_putchar_fd(*s, fd);
+            write(fd, &*s, 1);
 			s++;
 		}
 	}
 }
 
-pthread_mutex_t         write_status = PTHREAD_MUTEX_INITIALIZER;
-
-void    status_fork()
+void	ft_putnbr_fd(int n, int fd)
 {
-    char *str;
+	long	ln;
 
-    str = "take forks \n";
-    pthread_mutex_lock(&write_status);
-    ft_putstr_fd("Philo ", 1);
-    ft_putstr_fd(str, 1);
-    pthread_mutex_unlock(&write_status);
+	ln = (long)n;
+	if (ln < 0)
+	{
+		ln *= -1;
+		ft_putchar_fd('-', fd);
+	}
+	if (ln >= 10)
+	{
+		ft_putnbr_fd(ln / 10, fd);
+		ft_putnbr_fd(ln % 10, fd);
+	}
+	else
+	{
+		if (fd >= 0)
+			ft_putchar_fd(ln + 48, fd);
+	}
 }
 
-void    status_eating()
-{
-    char *str;
+pthread_mutex_t         write_mutex = PTHREAD_MUTEX_INITIALIZER;
 
-    str = "is eating \n";
-    pthread_mutex_lock(&write_status);
-    ft_putstr_fd("Philo ", 1);
+void    write_status(char *str, t_philo *ph)
+{
+    int now;
+    struct timeval current_time;
+
+    now = 0;
+    pthread_mutex_lock(&write_mutex);
+    gettimeofday(&current_time, NULL);
+    now = current_time.tv_usec;
+    //printf("now = %d\n", now);
+    //printf("start time = %d\n", ph->pa->ms);
+    ft_putnbr_fd(((now - ph->pa->ms) / 1000), 1);
+    ft_putstr_fd(" Philo ", 1);
+    ft_putnbr_fd(ph->id, 1);
     ft_putstr_fd(str, 1);
-    pthread_mutex_unlock(&write_status);
+    pthread_mutex_unlock(&write_mutex);
 }
 
 int     ft_exit(char *str)
@@ -61,6 +79,7 @@ int    initialize(t_p *p)
     while (i < p->a.total)
     {
         p->ph[i].id = i + 1;
+        pthread_mutex_init(&p->ph[i].r_f, NULL);
         if (i == p->a.total - 1)
             p->ph[i].r_f = p->ph[0].l_f;
         else

@@ -19,8 +19,8 @@ int    is_died(t_philo *ph)
 void    sleeping_thinking(t_philo *ph)
 {
     usleep(ph->pa->sleep * 1000); // is sleeping
-    printf("Philo %d is sleeping\n", ph->id);
-    printf("Philo %d is thinking\n", ph->id);
+    write_status(" is sleeping\n", ph);
+    write_status(" is thinking\n", ph);
 }
 
 void    activity(t_philo *ph)
@@ -35,9 +35,9 @@ void    activity(t_philo *ph)
         pthread_mutex_lock(&ph->l_f);
     else
         pthread_mutex_lock(&ph->r_f);
-    status_fork();
+    write_status(" take fork\n", ph);
     usleep(ph->pa->eat * 1000); //is eating
-    status_eating();
+    write_status(" is eating\n", ph);
     ph->r_fid = ph->id;
     ph->l_fid = ph->id;
     ph->nb_eat++;
@@ -59,11 +59,11 @@ void    *myThreadFun(void *data)
     {
         if (ph->nb_eat == ph->pa->m_eat)
         {
-            printf("Philo %d ate enough\n", ph->id);
+            write_status(" ate enough\n", ph);
             return NULL;
         }
         activity(ph);   
     }
-    printf("Philo %d died\n", ph->id);
+    write_status(" died\n", ph);
     return NULL;
 }

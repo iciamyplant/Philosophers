@@ -53,7 +53,6 @@ int     parse_args(int argc, char **argv, t_p *p);
 int     initialize(t_p *p);
 void    *myThreadFun(void *data);
 int     ft_exit(char *str);
-void    status_eating();
-void    status_fork();
+void    write_status(char *str, t_philo *ph);
 
 #endif

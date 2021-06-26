@@ -5,15 +5,12 @@ void    threading(t_p *p)
     int i;
     
     i = 0;
-    printf("Before Thread\n");
     while (i < p->a.total)
     {
         p->ph[i].pa = &p->a;
         pthread_create(&p->ph[i].thread_id, NULL, myThreadFun, &p->ph[i]);
         i++;
     }
-    sleep(3);
-    printf("After Thread\n");
 }
 
 int     main(int argc, char **argv)
@@ -26,6 +23,9 @@ int     main(int argc, char **argv)
         return (ft_exit("Malloc error"));
     if (!(initialize(&p)))
         return (ft_exit("Gettimeofday error"));
+    printf("Before Thread\n");
     threading(&p);
-    sleep(1);
+    while (!p.a.stop)
+        sleep(1);
+    printf("After Thread\n");
 }

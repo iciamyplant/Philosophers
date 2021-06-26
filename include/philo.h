@@ -23,18 +23,19 @@ typedef	struct              s_arg //arguments of ./philo
     int                     sleep;
     int                     m_eat;   //must eat m_eat times
     long int                start_t; // start time in milliseconds
+    int                     stop; // 0 if none philosopher is dead, 1 if a philosopher is dead, 2 if all philosophers ate m_eat times
 }                           t_arg;
 
 typedef	struct              s_philo
 {
 	int                     id;
     pthread_t               thread_id;
-    pthread_mutex_t         r_f;    // right fork
+    pthread_mutex_t         *r_f;    // right fork
     pthread_mutex_t         l_f;    // left fork
     int                     r_fid;  // the id of the last philosopher who used this fork
     int                     l_fid;  // the id of the last philosopher who used this fork
     t_arg                   *pa;    // pointer to structure with all arguments
-    long int                ms_eat; // time of eat, changing each time when philospher is eating ms_eat++
+    long int                ms_eat; // time of eat, changing each time when philospher is eating ms_eat
     int                     nb_eat; // each time the philosopher eats nb_eat++
 }                           t_philo;
 

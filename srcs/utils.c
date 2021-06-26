@@ -75,14 +75,16 @@ int    initialize(t_p *p)
 
     i = 0;
     p->a.start_t = actual_time();
+    p->a.stop = 0;
     while (i < p->a.total)
     {
         p->ph[i].id = i + 1;
-        pthread_mutex_init(&p->ph[i].r_f, NULL);
+        p->ph[i].r_f = (malloc(sizeof(pthread_mutex_t) * 1));
+        pthread_mutex_init(&p->ph[i].l_f, NULL);
         if (i == p->a.total - 1)
-            p->ph[i].r_f = p->ph[0].l_f;
+            p->ph[i].r_f = &p->ph[0].l_f;
         else
-            p->ph[i].r_f = p->ph[i + 1].l_f; // chaque philosopher detient sa fourchette a gauche et emprunte celle de son voisin de droite
+            p->ph[i].r_f = &p->ph[i + 1].l_f; // chaque philosopher detient sa fourchette a gauche et emprunte celle de son voisin de droite
         i++;
     }
     return (1);

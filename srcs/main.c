@@ -10,7 +10,6 @@ void    threading(t_p *p)
     {
         p->ph[i].pa = &p->a;
         pthread_create(&p->ph[i].thread_id, NULL, myThreadFun, &p->ph[i]);
-        //pthread_create(&p->ph[i].thread_id, NULL, myThreadFun, (void *)p);
         i++;
     }
     sleep(3);

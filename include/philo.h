@@ -21,9 +21,8 @@ typedef	struct              s_arg //arguments of ./philo
     int                     die;
     int                     eat;
     int                     sleep;
-    int                     m_eat; //must eat m_eat times
-    long int                s;  // start time in seconds
-    int                     ms; // start time in microseconds
+    int                     m_eat;   //must eat m_eat times
+    long int                start_t; // start time in milliseconds
 }                           t_arg;
 
 typedef	struct              s_philo
@@ -35,7 +34,7 @@ typedef	struct              s_philo
     int                     r_fid;  // the id of the last philosopher who used this fork
     int                     l_fid;  // the id of the last philosopher who used this fork
     t_arg                   *pa;    // pointer to structure with all arguments
-    int                     ms_eat; // time of eat, changing each time when philospher is eating
+    long int                ms_eat; // time of eat, changing each time when philospher is eating ms_eat++
     int                     nb_eat; // each time the philosopher eats nb_eat++
 }                           t_philo;
 
@@ -54,5 +53,6 @@ int     initialize(t_p *p);
 void    *myThreadFun(void *data);
 int     ft_exit(char *str);
 void    write_status(char *str, t_philo *ph);
+long int       actual_time();
 
 #endif

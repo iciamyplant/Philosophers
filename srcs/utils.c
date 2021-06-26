@@ -18,11 +18,11 @@ void	ft_putstr_fd(char *s, int fd)
 	}
 }
 
-void	ft_putnbr_fd(int n, int fd)
+void	ft_putnbr_fd(long int ln, int fd)
 {
-	long	ln;
+	//long	ln;
 
-	ln = (long)n;
+	//ln = (long)n;
 	if (ln < 0)
 	{
 		ln *= -1;
@@ -40,20 +40,23 @@ void	ft_putnbr_fd(int n, int fd)
 	}
 }
 
+long int       actual_time(void)
+{
+    long int    time;
+    struct      timeval current_time;
+    time = 0;
+
+    gettimeofday(&current_time, NULL);   
+    time = (current_time.tv_sec * 1000) + (current_time.tv_usec / 1000); //temps en millisecondes
+    return (time);
+}
+
 pthread_mutex_t         write_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 void    write_status(char *str, t_philo *ph)
 {
-    int now;
-    struct timeval current_time;
-
-    now = 0;
     pthread_mutex_lock(&write_mutex);
-    gettimeofday(&current_time, NULL);
-    now = current_time.tv_usec;
-    //printf("now = %d\n", now);
-    //printf("start time = %d\n", ph->pa->ms);
-    ft_putnbr_fd(((now - ph->pa->ms) / 1000), 1);
+    ft_putnbr_fd(actual_time() - ph->pa->start_t, 1);
     ft_putstr_fd(" Philo ", 1);
     ft_putnbr_fd(ph->id, 1);
     ft_putstr_fd(str, 1);
@@ -68,14 +71,10 @@ int     ft_exit(char *str)
 
 int    initialize(t_p *p)
 {
-    struct timeval current_time;
     int i;
 
     i = 0;
-    if (gettimeofday(&current_time, NULL) == -1)
-        return (0);
-    p->a.s = current_time.tv_sec;
-    p->a.ms = current_time.tv_usec;
+    p->a.start_t = actual_time();
     while (i < p->a.total)
     {
         p->ph[i].id = i + 1;
@@ -84,7 +83,6 @@ int    initialize(t_p *p)
             p->ph[i].r_f = p->ph[0].l_f;
         else
             p->ph[i].r_f = p->ph[i + 1].l_f; // chaque philosopher detient sa fourchette a gauche et emprunte celle de son voisin de droite
-        //pthread_mutex_init(p->ph[i].l_f, NULL);
         i++;
     }
     return (1);

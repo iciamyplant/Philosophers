@@ -27,11 +27,7 @@ void	*is_dead(void	*data)
 			}
 		}
 		if (ph->nb_eat == ph->pa->m_eat)
-		{
 			ph->pa->stop = 2;
-			write_status(" ate enough\n", ph);
-			return NULL;
-		}
 	}
 	//printf("now = %d\n", now);
 	//printf("ph->ms_eat = %ld\n", ph->ms_eat);
@@ -49,21 +45,31 @@ void    activity(t_philo *ph)
 {
     if (ph->id % 2 != 0)
     {
-        pthread_mutex_lock(ph->r_f);
-        pthread_mutex_lock(&ph->l_f);
+		if (ph->id != ph->r_fid)
+			pthread_mutex_lock(ph->r_f);
     }
-    else if (ph->id % 2 == 0)
+    if (ph->id % 2 == 0)
     {
-        pthread_mutex_lock(&ph->l_f);
-        pthread_mutex_lock(ph->r_f);
+		if (ph->id != ph->l_fid)
+			pthread_mutex_lock(&ph->l_f);
+    }
+	if (ph->id % 2 != 0)
+	{
+		if (ph->id != ph->l_fid)
+			pthread_mutex_lock(&ph->l_f);
+	}
+	if (ph->id % 2 == 0)
+    {
+		if (ph->id != ph->r_fid)
+			pthread_mutex_lock(ph->r_f);
     }
     write_status(" has taken forks\n", ph);
     // printf("----------philo %d STARTS eating at : %ld\n", ph->id, actual_time() - ph->pa->start_t);
     usleep(ph->pa->eat * 1000); //is eating
     write_status(" is eating\n", ph);
     // printf("----------philo %d STOPS eating at : %ld\n", ph->id, actual_time() - ph->pa->start_t);
-    //ph->r_fid = ph->id;
-    //ph->l_fid = ph->id;
+    ph->r_fid = ph->id;
+    ph->l_fid = ph->id;
     ph->nb_eat++;
     ph->ms_eat = actual_time();
     pthread_mutex_unlock(ph->r_f);
@@ -80,6 +86,9 @@ void	*thread(void *data)
 	ph = (t_philo *)data;
 	while (!ph->pa->stop)
         activity(ph);
-    write_status(" died\n", ph);
+    if (ph->pa->stop == 2)
+		write_status(" EATEN ENOUGH\n", ph);
+	else if (ph->pa->stop == 1)
+		write_status(" DIED\n", ph);
     return NULL;
 }

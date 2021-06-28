@@ -1,28 +1,41 @@
 #include "../include/philo.h"
 
-int    is_dead(t_philo *ph)
+void	*is_dead(void	*data)
 {
-    struct timeval      current_time;
-    int                 now;
+	t_philo					*ph;
 
-    gettimeofday(&current_time, NULL);
-    now = current_time.tv_usec;
-    if (ph->ms_eat == 0) // quand le philosophe n'a encore jamais mange
-    {
-        //printf("- - - - - - - - - actual time - ph->pa->start_t = %ld\n", actual_time() - ph->pa->start_t);
-        if ((actual_time() - ph->pa->start_t) >= (long)(ph->pa->die))
-            return (1);
-    }
-    if (ph->ms_eat)
-    {
-        //printf("actual time - ph->ms_eat = %ld\n", actual_time() - ph->ms_eat);
-        if ((actual_time() - ph->ms_eat) >= (long)(ph->pa->die))
-        {
-            return (1);
-        }
-    }
-    //printf("ph->ms_eat = %ld\n", ph->ms_eat);
-    return (0);
+	ph = (t_philo *)data;
+	while (!ph->pa->stop)
+	{
+		if (ph->ms_eat == 0) // quand le philosophe n'a encore jamais mange
+		{
+			//printf("- - - - - - - - - actual time - ph->pa->start_t = %ld\n", actual_time() - ph->pa->start_t);
+			if ((actual_time() - ph->pa->start_t) >= (long)(ph->pa->die))
+			{
+				ph->pa->stop = 1;
+				return NULL;
+			}
+		}
+		// printf("ph->nb_eat = %d\n", ph->nb_eat);
+		if (ph->ms_eat)
+		{
+			if ((actual_time() - ph->ms_eat) >= (long)(ph->pa->die))
+			{
+				printf("actual time - ph->ms_eat = ||| %ld ||| for philo %d \n", actual_time() - ph->ms_eat, ph->id);
+				ph->pa->stop = 1;
+				return NULL;
+			}
+		}
+		if (ph->nb_eat == ph->pa->m_eat)
+		{
+			ph->pa->stop = 2;
+			write_status(" ate enough\n", ph);
+			return NULL;
+		}
+	}
+	//printf("now = %d\n", now);
+	//printf("ph->ms_eat = %ld\n", ph->ms_eat);
+	return NULL;
 }
 
 void    sleeping_thinking(t_philo *ph)
@@ -60,24 +73,13 @@ void    activity(t_philo *ph)
 
 void	*thread(void *data)
 {
-	t_philo *ph;
-	//pthread_t               thread_death_id;
+	t_philo					*ph;
+	pthread_t				thread_death_id;
 
+	pthread_create(&thread_death_id, NULL, is_dead, data);
 	ph = (t_philo *)data;
-    //pthread_create(&thread_death_id, NULL, is_dead, &ph);
-    while (!is_dead(ph))
-    {
-        if (ph->nb_eat == ph->pa->m_eat)
-        {
-            write_status(" ate enough\n", ph);
-            ph->pa->stop = 2;
-            return NULL;
-        }
-        if (is_dead(ph))
-            break;
+	while (!ph->pa->stop)
         activity(ph);
-    }
     write_status(" died\n", ph);
-    ph->pa->stop = 1;
     return NULL;
 }

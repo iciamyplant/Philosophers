@@ -36,28 +36,21 @@ void    activity(t_philo *ph)
 {
     int error; 
     error = -1;
-    //if (ph->nb_eat == 0)
-    //    printf("/-/-/-/-/-/-/-/-/-/-/ ph->r_fid = %d\n", ph->r_fid);
-    //if (ph->id % 2 == 0 && ph->id != ph->r_fid)
-    //    pthread_mutex_lock(ph->r_f);
-    if (ph->id % 2 == 0)
+    if (ph->id % 2 != 0)
     {
         pthread_mutex_lock(ph->r_f);
         pthread_mutex_lock(&ph->l_f);
     }
-    else if (ph->id % 2 != 0)
+    else if (ph->id % 2 == 0)
     {
         pthread_mutex_lock(&ph->l_f);
         pthread_mutex_lock(ph->r_f);
     }
-    //if (ph->id % 2 == 0 && ph->id != ph->l_fid)
-    //    pthread_mutex_lock(&ph->l_f);
-    //if (ph->id % 2 == 0)
-    write_status(" take fork\n", ph);
-    printf("----------philo %d STARTS eating at : %ld\n", ph->id, actual_time() - ph->pa->start_t);
+    write_status(" has taken forks\n", ph);
+    // printf("----------philo %d STARTS eating at : %ld\n", ph->id, actual_time() - ph->pa->start_t);
     usleep(ph->pa->eat * 1000); //is eating
     write_status(" is eating\n", ph);
-    printf("----------philo %d STOPS eating at : %ld\n", ph->id, actual_time() - ph->pa->start_t);
+    // printf("----------philo %d STOPS eating at : %ld\n", ph->id, actual_time() - ph->pa->start_t);
     ph->r_fid = ph->id;
     ph->l_fid = ph->id;
     ph->nb_eat++;
@@ -76,6 +69,7 @@ void    *myThreadFun(void *data)
     ph->nb_eat = 0;
     ph->r_fid = -1;
     ph->l_fid = -1;
+    //pthread_create(thread_id, NULL, myThreadFun, &p->ph[i]);
     while (!is_dead(ph))
     {
         if (ph->nb_eat == ph->pa->m_eat)

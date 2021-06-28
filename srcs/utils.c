@@ -79,7 +79,7 @@ int    initialize(t_p *p)
     //printf("p->a.total : %d\n", p->a.total);
     while (i < p->a.total)
     {
-        p->ph[i].id = i;
+        p->ph[i].id = i + 1;
         p->ph[i].r_f = (malloc(sizeof(pthread_mutex_t) * 1));
         pthread_mutex_init(&p->ph[i].l_f, NULL);
         if (i == p->a.total - 1)

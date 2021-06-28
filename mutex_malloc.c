@@ -28,13 +28,13 @@ void    *go1(void *pp)
     ppp = (t_p *)pp;
 
     printf("i = %d\n", ppp->i);
-    pthread_mutex_lock(ppp->mutex);
+    //pthread_mutex_lock(ppp->mutex);
     while (str[i])
     {
         write(1, &str[i], 1);
         i++;
     }
-    pthread_mutex_unlock(ppp->mutex);
+    //pthread_mutex_unlock(ppp->mutex);
     return (NULL);
 }
 

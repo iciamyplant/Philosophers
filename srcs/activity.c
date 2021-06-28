@@ -9,7 +9,7 @@ int    is_dead(t_philo *ph)
     now = current_time.tv_usec;
     if (ph->ms_eat == 0) // quand le philosophe n'a encore jamais mange
     {
-        printf("- - - - - - - - - actual time - ph->pa->start_t = %ld\n", actual_time() - ph->pa->start_t);
+        //printf("- - - - - - - - - actual time - ph->pa->start_t = %ld\n", actual_time() - ph->pa->start_t);
         if ((actual_time() - ph->pa->start_t) >= (long)(ph->pa->die))
             return (1);
     }
@@ -34,14 +34,25 @@ void    sleeping_thinking(t_philo *ph)
 
 void    activity(t_philo *ph)
 {
-    if (ph->id % 2 == 0 && ph->id != ph->r_fid)
+    int error; 
+    error = -1;
+    //if (ph->nb_eat == 0)
+    //    printf("/-/-/-/-/-/-/-/-/-/-/ ph->r_fid = %d\n", ph->r_fid);
+    //if (ph->id % 2 == 0 && ph->id != ph->r_fid)
+    //    pthread_mutex_lock(ph->r_f);
+    if (ph->id % 2 == 0)
+    {
         pthread_mutex_lock(ph->r_f);
-    else
         pthread_mutex_lock(&ph->l_f);
-    if (ph->id % 2 == 0 && ph->id != ph->l_fid)
+    }
+    else if (ph->id % 2 != 0)
+    {
         pthread_mutex_lock(&ph->l_f);
-    else
         pthread_mutex_lock(ph->r_f);
+    }
+    //if (ph->id % 2 == 0 && ph->id != ph->l_fid)
+    //    pthread_mutex_lock(&ph->l_f);
+    //if (ph->id % 2 == 0)
     write_status(" take fork\n", ph);
     printf("----------philo %d STARTS eating at : %ld\n", ph->id, actual_time() - ph->pa->start_t);
     usleep(ph->pa->eat * 1000); //is eating
@@ -63,6 +74,8 @@ void    *myThreadFun(void *data)
     ph = (t_philo *)data;
     ph->ms_eat = 0;
     ph->nb_eat = 0;
+    ph->r_fid = -1;
+    ph->l_fid = -1;
     while (!is_dead(ph))
     {
         if (ph->nb_eat == ph->pa->m_eat)

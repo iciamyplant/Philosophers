@@ -8,7 +8,7 @@ CFLAGS		=	-Werror -Wall -Wextra -g -I $(HEADER) -fsanitize=address
 
 SRCS		=	srcs/main.c \
 				srcs/activity.c \
-				srcs/parsing.c \
+				srcs/init_and_parse.c \
 				srcs/utils.c \
 
 OBJS		=	$(SRCS:.c=.o)

@@ -1,32 +1,34 @@
 #include "../include/philo.h"
 
-void    threading(t_p *p)
+int		ft_exit(char *str)
 {
-    int i;
-    
-    i = 0;
-    while (i < p->a.total)
-    {
-        p->ph[i].pa = &p->a;
-        pthread_create(&p->ph[i].thread_id, NULL, myThreadFun, &p->ph[i]);
-        //usleep(10);
-        i++;
-    }
+	ft_putstr_fd(str, 1);
+	return (-1);
 }
 
-int     main(int argc, char **argv)
+void	threading(t_p *p)
 {
-    t_p         p;
+	int i;
 
-    if (!(parse_args(argc, argv, &p)))
-        return (ft_exit("Invalid Arguments"));
-    if (!(p.ph = (malloc(sizeof(t_philo) * p.a.total))))
-        return (ft_exit("Malloc error"));
-    if (!(initialize(&p)))
-        return (ft_exit("Gettimeofday error"));
-    printf("Before Thread\n");
-    threading(&p);
-    while (!p.a.stop)
-        sleep(1);
-    printf("After Thread\n");
+	i = 0;
+	while (i < p->a.total)
+	{
+		p->ph[i].pa = &p->a;
+		pthread_create(&p->ph[i].thread_id, NULL, thread, &p->ph[i]);
+		i++;
+	}
+}
+
+int		main(int argc, char **argv)
+{
+	t_p		p;
+
+	if (!(parse_args(argc, argv, &p)))
+		return (ft_exit("Invalid Arguments\n"));
+	if (!(p.ph = (malloc(sizeof(t_philo) * p.a.total))))
+		return (ft_exit("Malloc error\n"));
+	initialize(&p);
+	threading(&p);
+	while (!p.a.stop)
+		sleep(1);
 }

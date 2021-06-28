@@ -34,8 +34,6 @@ void    sleeping_thinking(t_philo *ph)
 
 void    activity(t_philo *ph)
 {
-    int error; 
-    error = -1;
     if (ph->id % 2 != 0)
     {
         pthread_mutex_lock(ph->r_f);
@@ -51,8 +49,8 @@ void    activity(t_philo *ph)
     usleep(ph->pa->eat * 1000); //is eating
     write_status(" is eating\n", ph);
     // printf("----------philo %d STOPS eating at : %ld\n", ph->id, actual_time() - ph->pa->start_t);
-    ph->r_fid = ph->id;
-    ph->l_fid = ph->id;
+    //ph->r_fid = ph->id;
+    //ph->l_fid = ph->id;
     ph->nb_eat++;
     ph->ms_eat = actual_time();
     pthread_mutex_unlock(ph->r_f);
@@ -60,16 +58,13 @@ void    activity(t_philo *ph)
     sleeping_thinking(ph);
 }
 
-void    *myThreadFun(void *data)
+void	*thread(void *data)
 {
-    t_philo *ph;
+	t_philo *ph;
+	//pthread_t               thread_death_id;
 
-    ph = (t_philo *)data;
-    ph->ms_eat = 0;
-    ph->nb_eat = 0;
-    ph->r_fid = -1;
-    ph->l_fid = -1;
-    //pthread_create(thread_id, NULL, myThreadFun, &p->ph[i]);
+	ph = (t_philo *)data;
+    //pthread_create(&thread_death_id, NULL, is_dead, &ph);
     while (!is_dead(ph))
     {
         if (ph->nb_eat == ph->pa->m_eat)

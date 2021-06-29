@@ -60,3 +60,6 @@ int main()
     pthread_create(&thread_id2, NULL, go1, (void *)pp);
     sleep(1);
 }
+
+    // printf("----------philo %d STARTS eating at : %ld\n", ph->id, actual_time() - ph->pa->start_t);
+    // printf("----------philo %d STOPS eating at : %ld\n", ph->id, actual_time() - ph->pa->start_t);

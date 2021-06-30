@@ -18,12 +18,13 @@
 typedef	struct				s_arg		//arguments after ./philo
 {
 	int						total;		// number of philosophers
-	int						die;		// time to die
-	int						eat;		// time to eat
-	int						sleep;		// time to sleep
+	int						die;		// time to die in milliseconds
+	int						eat;		// time to eat in milliseconds
+	int						sleep;		// time to sleep in milliseconds
 	int						m_eat;		// must eat m_eat times
 	long int				start_t;	// start time in milliseconds
 	pthread_mutex_t			write_mutex;// write mutex
+	int						nb_p_finish;// when a philosopher ate m_eat times : nb_p_finish++
 	int						stop;		// 0 if none philosopher is dead, 1 if a philosopher is dead, 2 if all philosophers ate m_eat times
 }							t_arg;
 
@@ -52,12 +53,12 @@ typedef	struct				s_p
 */
 
 int				parse_args(int argc, char **argv, t_p *p);
-void			initialize(t_p *p);
+int				initialize(t_p *p);
 void			*thread(void *data);
 int				ft_exit(char *str);
 void			write_status(char *str, t_philo *ph);
 long int		actual_time(void);
 void			ft_putstr_fd(char *s, int fd);
-void	ft_usleep(long int time_in_ms);
+void			ft_usleep(long int time_in_ms);
 
 #endif

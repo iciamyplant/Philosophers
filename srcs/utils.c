@@ -43,7 +43,8 @@ long int		actual_time(void)
 	struct timeval		current_time;
 
 	time = 0;
-	gettimeofday(&current_time, NULL);
+	if (gettimeofday(&current_time, NULL) == -1)
+		ft_exit("Gettimeofday returned -1\n");
 	time = (current_time.tv_sec * 1000) + (current_time.tv_usec / 1000); //temps en millisecondes
 	return (time);
 }

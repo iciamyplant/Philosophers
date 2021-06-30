@@ -46,22 +46,22 @@ int		parse_args(int argc, char **argv, t_p *p)
 	return (0);
 }
 
-void	initialize(t_p *p)
+int		initialize(t_p *p)
 {
 	int i;
 
 	i = 0;
 	p->a.start_t = actual_time();
 	p->a.stop = 0;
+	p->a.nb_p_finish = 0;
 	pthread_mutex_init(&p->a.write_mutex, NULL);
 	while (i < p->a.total)
 	{
 		p->ph[i].id = i + 1;
 		p->ph[i].ms_eat = 0;
 		p->ph[i].nb_eat = 0;
-		//p->ph[i].r_fid = -1;
-    	//p->ph[i].l_fid = -1;
-		p->ph[i].r_f = (malloc(sizeof(pthread_mutex_t) * 1));
+		if (!(p->ph[i].r_f = (malloc(sizeof(pthread_mutex_t) * 1))))
+			return (ft_exit("Malloc returned NULL\n"));
 		pthread_mutex_init(&p->ph[i].l_f, NULL); // chaque philosopher detient sa propre fourchette a gauche
 		if (i == p->a.total - 1)
 			p->ph[i].r_f = &p->ph[0].l_f;
@@ -69,4 +69,5 @@ void	initialize(t_p *p)
 			p->ph[i].r_f = &p->ph[i + 1].l_f; // et emprunte celle de son voisin de droite
 		i++;
 	}
+	return (1);
 }

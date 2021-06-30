@@ -31,6 +31,7 @@ typedef	struct				s_philo
 {
 	int						id;			// id of the philosopher
 	pthread_t				thread_id;	// thread id
+	pthread_t				thread_death_id; // id of the thread monitoring death
 	pthread_mutex_t			*r_f;		// right fork mutex
 	pthread_mutex_t			l_f;		// left fork mutex
 	int						r_fid;		// the id of the last philosopher who used the right fork

@@ -7,16 +7,10 @@ void	*is_dead(void	*data)
 	ph = (t_philo *)data;
 	while (!ph->pa->stop)
 	{
-		if (ph->ms_eat == 0 && ((actual_time() - ph->pa->start_t) >= (long)(ph->pa->die))) // quand le philosophe n'a encore jamais mange
+		usleep(ph->pa->die / 100);
+		if ((ph->ms_eat == 0 && ((actual_time() - ph->pa->start_t) >= (long)(ph->pa->die)))
+			|| (ph->ms_eat && ((actual_time() - ph->ms_eat) >= (long)(ph->pa->die)))) // quand le philosophe n'a encore jamais mange
 		{
-			ph->pa->stop = 1;
-			write_status(" CA RENTRE\n", ph);
-			//printf("ca rentre pour philo n %d\n", ph->id);
-			return NULL;
-		}
-		if (ph->ms_eat && ((actual_time() - ph->ms_eat) >= (long)(ph->pa->die)))
-		{
-			printf("actual time - ph->ms_eat = ||| %ld ||| for philo %d \n", actual_time() - ph->ms_eat, ph->id);
 			ph->pa->stop = 1;
 			return NULL;
 		}
@@ -26,45 +20,34 @@ void	*is_dead(void	*data)
 	return NULL;
 }
 
-void	sleeping_thinking(t_philo *ph)
-{
-	write_status(" is sleeping\n", ph);
-	usleep(ph->pa->sleep * 1000);
-	write_status(" is thinking\n", ph);
-}
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
 void	activity(t_philo *ph)
 {
-	if (ph->id % 2 != 0)
-	{
-		if (ph->id != ph->r_fid)
-			pthread_mutex_lock(ph->r_f);
-	}
-	if (ph->id % 2 == 0)
-	{
-		if (ph->id != ph->l_fid)
-			pthread_mutex_lock(&ph->l_f);
-	}
-	if (ph->id % 2 != 0)
-	{
-		if (ph->id != ph->l_fid)
-			pthread_mutex_lock(&ph->l_f);
-	}
-	if (ph->id % 2 == 0)
-	{
-		if (ph->id != ph->r_fid)
-			pthread_mutex_lock(ph->r_f);
-	}
-	write_status(" has taken a fork\n", ph);
-	write_status(" is eating\n", ph);
+	pthread_mutex_lock(&ph->l_f);
+	pthread_mutex_lock(ph->r_f);
+	pthread_mutex_lock(&mutex);
+	write_status("has taken a fork\n", ph);
+	write_status("has taken a fork\n", ph);
+	pthread_mutex_unlock(&mutex);
+
+	pthread_mutex_lock(&mutex);
+	write_status("is eating\n", ph);
 	ph->ms_eat = actual_time();
-	usleep(ph->pa->eat * 1000);
+	pthread_mutex_unlock(&mutex);
+	ft_usleep(ph->pa->eat); //peut attendre un peu plus que ce que je rentre dans usleep
 	pthread_mutex_unlock(ph->r_f);
 	pthread_mutex_unlock(&ph->l_f);
-	ph->r_fid = ph->id;
-	ph->l_fid = ph->id;
 	ph->nb_eat++;
-	sleeping_thinking(ph);
+
+	pthread_mutex_lock(&mutex);
+	write_status("is sleeping\n", ph);
+	pthread_mutex_unlock(&mutex);
+	ft_usleep(ph->pa->sleep);
+
+	pthread_mutex_lock(&mutex);
+	write_status("is thinking\n", ph);
+	pthread_mutex_unlock(&mutex);
 }
 
 void	*thread(void *data)
@@ -74,6 +57,8 @@ void	*thread(void *data)
 
 	pthread_create(&thread_death_id, NULL, is_dead, data);
 	ph = (t_philo *)data;
+	if (ph->id % 2 == 0)
+        usleep(ph->pa->eat / 10);
 	while (!ph->pa->stop)
 		activity(ph);
 	if (ph->pa->stop == 2)

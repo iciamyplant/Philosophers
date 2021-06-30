@@ -57,5 +57,6 @@ int				ft_exit(char *str);
 void			write_status(char *str, t_philo *ph);
 long int		actual_time(void);
 void			ft_putstr_fd(char *s, int fd);
+void	ft_usleep(long int time_in_ms);
 
 #endif

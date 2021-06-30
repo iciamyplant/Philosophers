@@ -48,12 +48,20 @@ long int		actual_time(void)
 	return (time);
 }
 
+void	ft_usleep(long int time_in_ms)
+{
+	long int	start_time;
+
+	start_time = 0;
+	start_time = actual_time();
+	while ((actual_time() - start_time) < time_in_ms)
+		usleep(time_in_ms / 10);
+}
+
 void			write_status(char *str, t_philo *ph)
 {
-	pthread_mutex_lock(&ph->pa->write_mutex);
-	ft_putnbr_fd(actual_time() - ph->pa->start_t, 1);
-	ft_putstr_fd(" Philo ", 1);
-	ft_putnbr_fd(ph->id, 1);
-	ft_putstr_fd(str, 1);
-	pthread_mutex_unlock(&ph->pa->write_mutex);
+	//pthread_mutex_lock(&ph->pa->write_mutex);
+	printf("%ld ", (actual_time() - ph->pa->start_t));
+	printf("Philo %d %s", ph->id, str);
+	//pthread_mutex_unlock(&ph->pa->write_mutex);
 }

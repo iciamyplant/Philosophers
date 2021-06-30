@@ -59,8 +59,8 @@ void	initialize(t_p *p)
 		p->ph[i].id = i + 1;
 		p->ph[i].ms_eat = 0;
 		p->ph[i].nb_eat = 0;
-		p->ph[i].r_fid = -1;
-    	p->ph[i].l_fid = -1;
+		//p->ph[i].r_fid = -1;
+    	//p->ph[i].l_fid = -1;
 		p->ph[i].r_f = (malloc(sizeof(pthread_mutex_t) * 1));
 		pthread_mutex_init(&p->ph[i].l_f, NULL); // chaque philosopher detient sa propre fourchette a gauche
 		if (i == p->a.total - 1)

@@ -11,14 +11,13 @@ void	*is_dead(void	*data)
         pthread_mutex_lock(&ph->pa->write_mutex);
 		write_status("died\n", ph);
 		ph->pa->stop = 1;
-		ft_usleep(200);
+		//ft_usleep(200);
 		//pthread_mutex_unlock(&ph->pa->write_mutex);
     }
 	if (ph->nb_eat == ph->pa->m_eat)
 	{
 		pthread_mutex_lock(&ph->pa->write_mutex);
 		ph->pa->nb_p_finish++;
-		write_status("ate enough\n", ph);
 		if (ph->pa->nb_p_finish == ph->pa->total)
 			ph->pa->stop = 2;
 		pthread_mutex_unlock(&ph->pa->write_mutex);
@@ -40,10 +39,6 @@ void	*thread(void *data)
         ph->nb_eat++;
         pthread_detach(ph->thread_death_id);
     }
-    //if (ph->nb_eat == ph->pa->m_eat)
-    //    ph->pa->nb_p_finish++;
-    //if (ph->pa->nb_p_finish == ph->pa->total)
-	//	ph->pa->stop = 2;
 	return (NULL);
 }
 

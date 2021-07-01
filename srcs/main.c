@@ -14,13 +14,13 @@ void	stop(t_p *p)
 	i = 0;
 	while (!p->a.stop)
 		ft_usleep(1); // peut etre pas bon pour attendre la fin du deroulement des threads
-	while (i < p->a.total)
-	{
-		pthread_detach(p->ph[i].thread_id);
-		pthread_detach(p->ph[i].thread_death_id); // attention a bien attendre jusqu'a ce que les threads soient finis
-		pthread_mutex_destroy(&p->ph[i].l_f);
-		i++;
-	}
+	//while (i < p->a.total)
+	//{
+	//	pthread_detach(p->ph[i].thread_id);
+	//	pthread_detach(p->ph[i].thread_death_id); // attention a bien attendre jusqu'a ce que les threads soient finis
+	//	pthread_mutex_destroy(&p->ph[i].l_f);
+	//	i++;
+	//}
 	// pthread_mutex_destroy(&p->a.write_mutex);
 	if (p->a.stop == 2)
 		printf("Each philosopher ate %d times\n", p->a.m_eat);

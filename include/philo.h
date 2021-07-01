@@ -24,6 +24,7 @@ typedef	struct				s_arg		//arguments after ./philo
 	int						m_eat;		// must eat m_eat times
 	long int				start_t;	// start time in milliseconds
 	pthread_mutex_t			write_mutex;// write mutex
+	//pthread_mutex_t			death;
 	int						nb_p_finish;// when a philosopher ate m_eat times : nb_p_finish++
 	int						stop;		// 0 if none philosopher is dead, 1 if a philosopher is dead, 2 if all philosophers ate m_eat times
 }							t_arg;

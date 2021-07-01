@@ -33,7 +33,7 @@ int		parse_args(int argc, char **argv, t_p *p)
 	if ((argc == 5 || argc == 6) && numeric(argv, 0, 1))
 	{
 		p->a.total = ft_atoi(argv[1]);
-		if (p->a.total <= 1)
+		if (p->a.total < 1)
 			return (0);
 		p->a.die = ft_atoi(argv[2]);
 		p->a.eat = ft_atoi(argv[3]);

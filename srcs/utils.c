@@ -49,7 +49,7 @@ long int		actual_time(void)
 	return (time);
 }
 
-void	ft_usleep(long int time_in_ms)
+void			ft_usleep(long int time_in_ms)
 {
 	long int	start_time;
 
@@ -57,12 +57,4 @@ void	ft_usleep(long int time_in_ms)
 	start_time = actual_time();
 	while ((actual_time() - start_time) < time_in_ms)
 		usleep(time_in_ms / 10);
-}
-
-void			write_status(char *str, t_philo *ph)
-{
-	//pthread_mutex_lock(&ph->pa->write_mutex);
-	printf("%ld ", (actual_time() - ph->pa->start_t));
-	printf("Philo %d %s", ph->id, str);
-	//pthread_mutex_unlock(&ph->pa->write_mutex);
 }

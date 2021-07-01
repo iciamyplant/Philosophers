@@ -7,32 +7,21 @@ int		ft_exit(char *str)
 	return (0);
 }
 
-int		threading(t_p *p)
-{
-	int i;
-
-	i = 0;
-	while (i < p->a.total)
-	{
-		p->ph[i].pa = &p->a;
-		if (pthread_create(&p->ph[i].thread_id, NULL, thread, &p->ph[i]) != 0)
-			return (ft_exit("Pthread did not return 0\n"));
-		i++;
-	}
-	return (1);
-}
-
-void		stop(t_p *p)
+void	stop(t_p *p)
 {
 	int	i;
 
 	i = 0;
+	while (!p->a.stop)
+		ft_usleep(1); // peut etre pas bon pour attendre la fin du deroulement des threads
 	while (i < p->a.total)
 	{
 		pthread_detach(p->ph[i].thread_id);
-		pthread_detach(p->ph[i].thread_death_id);
+		pthread_detach(p->ph[i].thread_death_id); // attention a bien attendre jusqu'a ce que les threads soient finis
+		pthread_mutex_destroy(&p->ph[i].l_f);
 		i++;
 	}
+	pthread_mutex_destroy(&p->a.write_mutex);
 	if (p->a.stop == 2)
 		printf("Each philosopher ate %d times\n", p->a.m_eat);
 }
@@ -47,9 +36,5 @@ int		main(int argc, char **argv)
 		return (ft_exit("Malloc returned NULL\n"));
 	if (!initialize(&p) || !threading(&p))
 		return (0);
-	while (!p.a.stop)
-		ft_usleep(1);
-	if (p.a.stop)
-		stop(&p);
-	return (0);
+	stop(&p);
 }

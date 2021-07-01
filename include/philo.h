@@ -35,8 +35,6 @@ typedef	struct				s_philo
 	pthread_t				thread_death_id; // id of the thread monitoring death
 	pthread_mutex_t			*r_f;		// right fork mutex
 	pthread_mutex_t			l_f;		// left fork mutex
-	int						r_fid;		// the id of the last philosopher who used the right fork
-	int						l_fid; 		// the id of the last philosopher who used the left fork
 	t_arg					*pa;		// pointer to structure with all arguments (pointer on a)
 	long int				ms_eat;		// time of the last dinner in milliseconds
 	int						nb_eat;		// number of dinners (each time the philosopher eats nb_eat++)
@@ -60,5 +58,7 @@ void			write_status(char *str, t_philo *ph);
 long int		actual_time(void);
 void			ft_putstr_fd(char *s, int fd);
 void			ft_usleep(long int time_in_ms);
+int				threading(t_p *p);
+void			activity(t_philo *ph);
 
 #endif

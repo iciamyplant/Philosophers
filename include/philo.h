@@ -61,4 +61,6 @@ void			ft_usleep(long int time_in_ms);
 int				threading(t_p *p);
 void			activity(t_philo *ph);
 
+void			ft_putnbr_fd(long int ln, int fd);
+
 #endif

@@ -21,7 +21,7 @@ void	stop(t_p *p)
 		pthread_mutex_destroy(&p->ph[i].l_f);
 		i++;
 	}
-	pthread_mutex_destroy(&p->a.write_mutex);
+	// pthread_mutex_destroy(&p->a.write_mutex);
 	if (p->a.stop == 2)
 		printf("Each philosopher ate %d times\n", p->a.m_eat);
 }

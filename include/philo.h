@@ -39,7 +39,7 @@ typedef	struct				s_philo
 	pthread_mutex_t			l_f;		// left fork mutex
 	t_arg					*pa;		// pointer to structure with all arguments (pointer on a)
 	long int				ms_eat;		// time of the last dinner in milliseconds
-	int						nb_eat;		// number of dinners (each time the philosopher eats nb_eat++)
+	unsigned int			nb_eat;		// number of dinners (each time the philosopher eats nb_eat++)
 	int						finish;		// 1 when a philosopher ate m_eat times, if not, 0
 } 							t_philo;
 

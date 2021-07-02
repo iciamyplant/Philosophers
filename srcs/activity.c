@@ -27,6 +27,7 @@ void	activity(t_philo *ph)
 	pthread_mutex_lock(&ph->pa->write_mutex);
 	write_status("is eating\n", ph);
 	ph->ms_eat = actual_time();
+	//printf("ici ph->ms_eat = %ld\n", ph->ms_eat);
 	pthread_mutex_unlock(&ph->pa->write_mutex);
 	//////pthread_mutex_lock(&ph->pa->test);
 	//////ph->ms_eat = actual_time();

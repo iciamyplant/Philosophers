@@ -29,7 +29,7 @@ void	*thread(void *data)
 		pthread_create(&ph->thread_death_id, NULL, is_dead, data);
 		activity(ph); // eat, sleep and think 1 time
 		pthread_detach(ph->thread_death_id);
-		if (++ph->nb_eat == ph->pa->m_eat)
+		if ((int)++ph->nb_eat == ph->pa->m_eat)
 		{
 			ph->finish = 1;
 			ph->pa->nb_p_finish++;
@@ -44,7 +44,7 @@ void	*thread(void *data)
 
 int		threading(t_p *p)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (i < p->a.total)

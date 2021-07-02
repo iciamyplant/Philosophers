@@ -1,5 +1,15 @@
 #include "../include/philo.h"
 
+int		ft_strlen(char *str)
+{
+	int		i;
+
+	i = 0;
+	while (str[i])
+		i++;
+	return (i);
+}
+
 int		ft_atoi(const char *str)
 {
 	int		i;
@@ -18,8 +28,8 @@ int		numeric(char **argv, int i, int j)
 	{
 		while (argv[j][i])
 		{
-			if (argv[j][i] < '0' || argv[j][i] > '9')
-				return (0); //il y a un caractere autre qu'un chiffre
+			if (argv[j][i] < '0' || argv[j][i] > '9' || ft_strlen(argv[j]) > 10)
+				return (0); //il y a un caractere autre qu'un chiffre ou plu grand qu'un int
 			i++;
 		}
 		i = 0;
@@ -39,7 +49,7 @@ int		parse_args(int argc, char **argv, t_p *p)
 		p->a.m_eat = -1;
 		if (argc == 6)
 			p->a.m_eat = ft_atoi(argv[5]);
-		if (!p->a.total || !p->a.die || !p->a.eat || !p->a.sleep || !p->a.m_eat)
+		if (p->a.total <= 0 || p->a.die <= 0 || p->a.eat <= 0 || p->a.sleep <= 0)
 			return (0);
 		return (1);
 	}
@@ -48,7 +58,7 @@ int		parse_args(int argc, char **argv, t_p *p)
 
 int		initialize(t_p *p)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	p->a.start_t = actual_time();
@@ -60,7 +70,7 @@ int		initialize(t_p *p)
 	while (i < p->a.total)
 	{
 		p->ph[i].id = i + 1;
-		p->ph[i].ms_eat = 0;
+		p->ph[i].ms_eat = p->a.start_t;
 		p->ph[i].nb_eat = 0;
 		p->ph[i].finish = 0;
 		if (!(p->ph[i].r_f = (malloc(sizeof(pthread_mutex_t) * 1))))

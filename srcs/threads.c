@@ -8,12 +8,12 @@ void	*is_dead(void	*data)
 	ft_usleep(ph->pa->die + 1);
 	if (!ph->pa->stop && !ph->finish && ((actual_time() - ph->ms_eat) >= (long)(ph->pa->die)))
 	{
-        pthread_mutex_lock(&ph->pa->write_mutex);
+		pthread_mutex_lock(&ph->pa->write_mutex);
 		write_status("died\n", ph);
 		ph->pa->stop = 1;
 		//ft_usleep(200);
 		//pthread_mutex_unlock(&ph->pa->write_mutex);
-    }
+	}
 	return NULL;
 }
 

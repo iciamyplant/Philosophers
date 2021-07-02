@@ -24,7 +24,8 @@ typedef	struct				s_arg		//arguments after ./philo
 	int						m_eat;		// must eat m_eat times
 	long int				start_t;	// start time in milliseconds
 	pthread_mutex_t			write_mutex;// write mutex
-	//pthread_mutex_t			death;
+	pthread_mutex_t			count;
+	pthread_mutex_t			test;
 	int						nb_p_finish;// when a philosopher ate m_eat times : nb_p_finish++
 	int						stop;		// 0 if none philosopher is dead, 1 if a philosopher is dead, 2 if all philosophers ate m_eat times
 }							t_arg;
@@ -39,6 +40,7 @@ typedef	struct				s_philo
 	t_arg					*pa;		// pointer to structure with all arguments (pointer on a)
 	long int				ms_eat;		// time of the last dinner in milliseconds
 	int						nb_eat;		// number of dinners (each time the philosopher eats nb_eat++)
+	int						finish;		// 1 when a philosopher ate m_eat times, if not, 0
 } 							t_philo;
 
 typedef	struct				s_p

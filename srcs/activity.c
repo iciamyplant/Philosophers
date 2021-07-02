@@ -28,6 +28,9 @@ void	activity(t_philo *ph)
 	write_status("is eating\n", ph);
 	ph->ms_eat = actual_time();
 	pthread_mutex_unlock(&ph->pa->write_mutex);
+	//////pthread_mutex_lock(&ph->pa->test);
+	//////ph->ms_eat = actual_time();
+	//////pthread_mutex_unlock(&ph->pa->test);
 	ft_usleep(ph->pa->eat);
 	pthread_mutex_unlock(ph->r_f);
 	pthread_mutex_unlock(&ph->l_f);

@@ -23,7 +23,7 @@ void	stop(t_p *p)
 	//}
 	// pthread_mutex_destroy(&p->a.write_mutex);
 	if (p->a.stop == 2)
-		printf("Each philosopher ate %d times\n", p->a.m_eat);
+		printf("Each philosopher ate %d time(s)\n", p->a.m_eat);
 }
 
 int		main(int argc, char **argv)

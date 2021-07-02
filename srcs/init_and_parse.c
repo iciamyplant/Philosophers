@@ -33,14 +33,14 @@ int		parse_args(int argc, char **argv, t_p *p)
 	if ((argc == 5 || argc == 6) && numeric(argv, 0, 1))
 	{
 		p->a.total = ft_atoi(argv[1]);
-		if (p->a.total < 1)
-			return (0);
 		p->a.die = ft_atoi(argv[2]);
 		p->a.eat = ft_atoi(argv[3]);
 		p->a.sleep = ft_atoi(argv[4]);
 		p->a.m_eat = -1;
 		if (argc == 6)
 			p->a.m_eat = ft_atoi(argv[5]);
+		if (!p->a.total || !p->a.die || !p->a.eat || !p->a.sleep || !p->a.m_eat)
+			return (0);
 		return (1);
 	}
 	return (0);
@@ -55,11 +55,14 @@ int		initialize(t_p *p)
 	p->a.stop = 0;
 	p->a.nb_p_finish = 0;
 	pthread_mutex_init(&p->a.write_mutex, NULL);
+	//pthread_mutex_init(&p->a.count, NULL);
+	//pthread_mutex_init(&p->a.test, NULL);
 	while (i < p->a.total)
 	{
 		p->ph[i].id = i + 1;
 		p->ph[i].ms_eat = 0;
 		p->ph[i].nb_eat = 0;
+		p->ph[i].finish = 0;
 		if (!(p->ph[i].r_f = (malloc(sizeof(pthread_mutex_t) * 1))))
 			return (ft_exit("Malloc returned NULL\n"));
 		pthread_mutex_init(&p->ph[i].l_f, NULL); // chaque philosopher detient sa propre fourchette a gauche

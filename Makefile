@@ -4,7 +4,7 @@ HEADER		=	./include/
 
 CC			=	gcc
 
-CFLAGS		=	-Werror -Wall -Wextra -g -I $(HEADER) -fsanitize=address#-fsanitize=thread 
+CFLAGS		=	-Werror -Wall -Wextra -g -I $(HEADER) -pthread #-fsanitize=address#-fsanitize=thread 
 
 SRCS		=	srcs/main.c \
 				srcs/activity.c \

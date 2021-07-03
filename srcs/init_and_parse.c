@@ -49,7 +49,7 @@ int		parse_args(int argc, char **argv, t_p *p)
 		p->a.m_eat = -1;
 		if (argc == 6)
 			p->a.m_eat = ft_atoi(argv[5]);
-		if (p->a.total <= 0 || p->a.die <= 0 || p->a.eat <= 0 || p->a.sleep <= 0)
+		if (p->a.total <= 1 || p->a.die <= 0 || p->a.eat <= 0 || p->a.sleep <= 0)
 			return (0);
 		return (1);
 	}
@@ -73,11 +73,13 @@ int		initialize(t_p *p)
 		p->ph[i].ms_eat = p->a.start_t;
 		p->ph[i].nb_eat = 0;
 		p->ph[i].finish = 0;
+		//p->ph[i].thread_death_id = 0;
+
 		if (!(p->ph[i].r_f = (malloc(sizeof(pthread_mutex_t) * 1))))
 			return (ft_exit("Malloc returned NULL\n"));
 		pthread_mutex_init(&p->ph[i].l_f, NULL); // chaque philosopher detient sa propre fourchette a gauche
 		if (i == p->a.total - 1)
-			p->ph[i].r_f = &p->ph[0].l_f;
+			p->ph[i].r_f = &p->ph[0].l_f; // et emprunte celle de son voisin de droite
 		else
 			p->ph[i].r_f = &p->ph[i + 1].l_f; // et emprunte celle de son voisin de droite
 		i++;

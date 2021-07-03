@@ -16,32 +16,14 @@ void	stop(t_p *p)
 		ft_usleep(1); // peut etre pas bon pour attendre la fin du deroulement des threads
 	while (i < p->a.total)
 	{
-		//pthread_join(p->ph[i].thread_death_id, NULL);
 		pthread_join(p->ph[i].thread_id, NULL);
 		i++;
 	}
 	pthread_mutex_destroy(&p->a.write_mutex);
 	i = 0;
-	while (i < p->a.total - 1)
-	{	
-		//if (i == 0)
-		//free(p->ph[i].r_f);
-		//if (i == 1)
-		//	free(p->ph[i - 1].r_f);
-		//if (i == 2)
-		//	free(p->ph[0].r_f);
-		i++;
-	}
-	i = 0;
 	while (i < p->a.total)
 	{	
-		//if (i == 0)
-		//	free(p->ph[p->a.total - 1].r_f);
-		//pthread_mutex_destroy(&p->ph[i].l_f);
-		//if (i == 1)
-		//	free(p->ph[i - 1].r_f);
-		//if (i == 2)
-		//	free(p->ph[0].r_f);
+		pthread_mutex_destroy(&p->ph[i].l_f);
 		i++;
 	}
 	if (p->a.stop == 2)

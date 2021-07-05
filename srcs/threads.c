@@ -6,14 +6,20 @@ void	*is_dead(void	*data)
 
 	ph = (t_philo *)data;
 	ft_usleep(ph->pa->die + 1);
-	if (!ph->pa->stop && !ph->finish && ((actual_time() - ph->ms_eat) >= (long)(ph->pa->die)))
+	pthread_mutex_lock(&ph->pa->time_eat);
+	if (!ph->pa->stop && !ph->finish && ((actual_time() - ph->ms_eat) \
+		>= (long)(ph->pa->die)))
 	{
+		pthread_mutex_unlock(&ph->pa->time_eat);
 		pthread_mutex_lock(&ph->pa->write_mutex);
 		write_status("died\n", ph);
+		pthread_mutex_lock(&ph->pa->dead);
 		ph->pa->stop = 1;
+		pthread_mutex_unlock(&ph->pa->dead);
 		pthread_mutex_unlock(&ph->pa->write_mutex);
 	}
-	return NULL;
+	pthread_mutex_unlock(&ph->pa->time_eat);
+	return (NULL);
 }
 
 void	*thread(void *data)
@@ -23,8 +29,10 @@ void	*thread(void *data)
 	ph = (t_philo *)data;
 	if (ph->id % 2 == 0)
 		ft_usleep(ph->pa->eat / 10);
+	pthread_mutex_lock(&ph->pa->dead);
 	while (!ph->pa->stop)
 	{
+		pthread_mutex_unlock(&ph->pa->write_mutex);
 		pthread_create(&ph->thread_death_id, NULL, is_dead, data);
 		activity(ph);
 		pthread_detach(ph->thread_death_id);
@@ -34,13 +42,14 @@ void	*thread(void *data)
 			ph->pa->nb_p_finish++;
 			if (ph->pa->nb_p_finish == ph->pa->total)
 				ph->pa->stop = 2;
-			break;
+			break ;
 		}
 	}
+	pthread_mutex_unlock(&ph->pa->write_mutex);
 	return (NULL);
 }
 
-int		threading(t_p *p)
+int	threading(t_p *p)
 {
 	int	i;
 

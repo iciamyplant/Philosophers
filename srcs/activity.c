@@ -1,6 +1,6 @@
 #include "../include/philo.h"
 
-void			write_status(char *str, t_philo *ph)
+void	write_status(char *str, t_philo *ph)
 {
 	long int		time;
 
@@ -23,7 +23,9 @@ void	activity(t_philo *ph)
 	pthread_mutex_unlock(&ph->pa->write_mutex);
 	pthread_mutex_lock(&ph->pa->write_mutex);
 	write_status("is eating\n", ph);
+	pthread_mutex_lock(&ph->pa->time_eat);
 	ph->ms_eat = actual_time();
+	pthread_mutex_unlock(&ph->pa->time_eat);
 	pthread_mutex_unlock(&ph->pa->write_mutex);
 	ft_usleep(ph->pa->eat);
 	pthread_mutex_unlock(ph->r_f);

@@ -1,4 +1,4 @@
-# ifndef PHILO_H
+#ifndef PHILO_H
 # define PHILO_H
 
 /*
@@ -15,7 +15,7 @@
 ** structures
 */
 
-typedef	struct				s_arg
+typedef struct s_arg
 {
 	int						total;
 	int						die;
@@ -24,13 +24,13 @@ typedef	struct				s_arg
 	int						m_eat;
 	long int				start_t;
 	pthread_mutex_t			write_mutex;
-	pthread_mutex_t			count;
-	pthread_mutex_t			test;
+	pthread_mutex_t			dead;
+	pthread_mutex_t			time_eat;
 	int						nb_p_finish;
 	int						stop;
 }							t_arg;
 
-typedef	struct				s_philo
+typedef struct s_philo
 {
 	int						id;
 	pthread_t				thread_id;
@@ -41,9 +41,9 @@ typedef	struct				s_philo
 	long int				ms_eat;
 	unsigned int			nb_eat;
 	int						finish;
-} 							t_philo;
+}							t_philo;
 
-typedef	struct				s_p
+typedef struct s_p
 {
 	t_philo					*ph;
 	t_arg					a;

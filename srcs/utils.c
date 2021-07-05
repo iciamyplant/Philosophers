@@ -1,24 +1,24 @@
 #include "../include/philo.h"
 
-void			ft_putchar_fd(char c, int fd)
+void	ft_putchar_fd(char c, int fd)
 {
 	if (fd >= 0)
 		write(fd, &c, 1);
 }
 
-void			ft_putstr_fd(char *s, int fd)
+void	ft_putstr_fd(char *s, int fd)
 {
 	if (fd >= 0)
 	{
 		while (s && *s)
 		{
-            write(fd, &*s, 1);
+			write(fd, &*s, 1);
 			s++;
 		}
 	}
 }
 
-void			ft_putnbr_fd(long int ln, int fd)
+void	ft_putnbr_fd(long int ln, int fd)
 {
 	if (ln < 0)
 	{
@@ -37,7 +37,7 @@ void			ft_putnbr_fd(long int ln, int fd)
 	}
 }
 
-long int		actual_time(void)
+long int	actual_time(void)
 {
 	long int			time;
 	struct timeval		current_time;
@@ -49,7 +49,7 @@ long int		actual_time(void)
 	return (time);
 }
 
-void			ft_usleep(long int time_in_ms)
+void	ft_usleep(long int time_in_ms)
 {
 	long int	start_time;
 

@@ -7,7 +7,7 @@ void			write_status(char *str, t_philo *ph)
 
 	time = -1;
 	time = actual_time() - ph->pa->start_t;
-	if (time >= 0 && time <= 2147483647)
+	if (time >= 0 && time <= 2147483647 && !ph->pa->stop)
 	{
 		printf("%ld ", time);
 		printf("Philo %d %s", ph->id, str);

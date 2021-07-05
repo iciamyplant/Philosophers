@@ -10,7 +10,8 @@ SRCS		=	srcs/main.c \
 				srcs/activity.c \
 				srcs/threads.c \
 				srcs/init_and_parse.c \
-				srcs/utils.c \
+				srcs/utils_philo.c \
+				srcs/utils_lib.c \
 
 OBJS		=	$(SRCS:.c=.o)
 

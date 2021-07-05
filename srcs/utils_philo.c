@@ -1,40 +1,17 @@
 #include "../include/philo.h"
 
-void	ft_putchar_fd(char c, int fd)
+int	check_death(t_philo *ph, int i)
 {
-	if (fd >= 0)
-		write(fd, &c, 1);
-}
-
-void	ft_putstr_fd(char *s, int fd)
-{
-	if (fd >= 0)
+	pthread_mutex_lock(&ph->pa->dead);
+	if (i)
+		ph->pa->stop = i;
+	if (ph->pa->stop)
 	{
-		while (s && *s)
-		{
-			write(fd, &*s, 1);
-			s++;
-		}
+		pthread_mutex_unlock(&ph->pa->dead);
+		return (1);
 	}
-}
-
-void	ft_putnbr_fd(long int ln, int fd)
-{
-	if (ln < 0)
-	{
-		ln *= -1;
-		ft_putchar_fd('-', fd);
-	}
-	if (ln >= 10)
-	{
-		ft_putnbr_fd(ln / 10, fd);
-		ft_putnbr_fd(ln % 10, fd);
-	}
-	else
-	{
-		if (fd >= 0)
-			ft_putchar_fd(ln + 48, fd);
-	}
+	pthread_mutex_unlock(&ph->pa->dead);
+	return (0);
 }
 
 long int	actual_time(void)

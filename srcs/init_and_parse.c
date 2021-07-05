@@ -1,15 +1,5 @@
 #include "../include/philo.h"
 
-int	ft_strlen(char *str)
-{
-	int		i;
-
-	i = 0;
-	while (str[i])
-		i++;
-	return (i);
-}
-
 int	ft_atoi(const char *str)
 {
 	int		i;
@@ -49,12 +39,20 @@ int	parse_args(int argc, char **argv, t_p *p)
 		p->a.m_eat = -1;
 		if (argc == 6)
 			p->a.m_eat = ft_atoi(argv[5]);
-		if (p->a.total <= 1 || p->a.die <= 0 || p->a.eat <= 0 \
+		if (p->a.total <= 0 || p->a.die <= 0 || p->a.eat <= 0 \
 			|| p->a.sleep <= 0)
 			return (0);
 		return (1);
 	}
 	return (0);
+}
+
+void	init_mutex(t_p *p)
+{
+	pthread_mutex_init(&p->a.write_mutex, NULL);
+	pthread_mutex_init(&p->a.dead, NULL);
+	pthread_mutex_init(&p->a.time_eat, NULL);
+	pthread_mutex_init(&p->a.finish, NULL);
 }
 
 int	initialize(t_p *p)
@@ -65,16 +63,17 @@ int	initialize(t_p *p)
 	p->a.start_t = actual_time();
 	p->a.stop = 0;
 	p->a.nb_p_finish = 0;
-	pthread_mutex_init(&p->a.write_mutex, NULL);
-	pthread_mutex_init(&p->a.dead, NULL);
-	pthread_mutex_init(&p->a.time_eat, NULL);
+	init_mutex(p);
 	while (i < p->a.total)
 	{
 		p->ph[i].id = i + 1;
 		p->ph[i].ms_eat = p->a.start_t;
 		p->ph[i].nb_eat = 0;
 		p->ph[i].finish = 0;
+		p->ph[i].r_f = NULL;
 		pthread_mutex_init(&p->ph[i].l_f, NULL);
+		if (p->a.total == 1)
+			return (1);
 		if (i == p->a.total - 1)
 			p->ph[i].r_f = &p->ph[0].l_f;
 		else

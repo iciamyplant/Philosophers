@@ -7,12 +7,24 @@ int	ft_exit(char *str)
 	return (0);
 }
 
+int	check_death2(t_p *p)
+{
+	pthread_mutex_lock(&p->a.dead);
+	if (p->a.stop)
+	{
+		pthread_mutex_unlock(&p->a.dead);
+		return (1);
+	}
+	pthread_mutex_unlock(&p->a.dead);
+	return (0);
+}
+
 void	stop(t_p *p)
 {
 	int	i;
 
 	i = -1;
-	while (!p->a.stop)
+	while (!check_death2(p))
 		ft_usleep(1);
 	while (++i < p->a.total)
 		pthread_join(p->ph[i].thread_id, NULL);

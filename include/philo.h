@@ -26,6 +26,7 @@ typedef struct s_arg
 	pthread_mutex_t			write_mutex;
 	pthread_mutex_t			dead;
 	pthread_mutex_t			time_eat;
+	pthread_mutex_t			finish;
 	int						nb_p_finish;
 	int						stop;
 }							t_arg;
@@ -62,5 +63,7 @@ void			ft_putstr_fd(char *s, int fd);
 void			ft_usleep(long int time_in_ms);
 int				threading(t_p *p);
 void			activity(t_philo *ph);
+int				check_death(t_philo *ph, int i);
+int				ft_strlen(char *str);
 
 #endif

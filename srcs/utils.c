@@ -45,7 +45,7 @@ long int		actual_time(void)
 	time = 0;
 	if (gettimeofday(&current_time, NULL) == -1)
 		ft_exit("Gettimeofday returned -1\n");
-	time = (current_time.tv_sec * 1000) + (current_time.tv_usec / 1000); //temps en millisecondes
+	time = (current_time.tv_sec * 1000) + (current_time.tv_usec / 1000);
 	return (time);
 }
 

@@ -13,7 +13,7 @@ void	stop(t_p *p)
 
 	i = -1;
 	while (!p->a.stop)
-		ft_usleep(1); // peut etre pas bon pour attendre la fin du deroulement des threads
+		ft_usleep(1);
 	while (++i < p->a.total)
 		pthread_join(p->ph[i].thread_id, NULL);
 	pthread_mutex_destroy(&p->a.write_mutex);

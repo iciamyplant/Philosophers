@@ -71,11 +71,11 @@ int		initialize(t_p *p)
 		p->ph[i].ms_eat = p->a.start_t;
 		p->ph[i].nb_eat = 0;
 		p->ph[i].finish = 0;
-		pthread_mutex_init(&p->ph[i].l_f, NULL); // chaque philosopher detient sa propre fourchette a gauche
+		pthread_mutex_init(&p->ph[i].l_f, NULL);
 		if (i == p->a.total - 1)
-			p->ph[i].r_f = &p->ph[0].l_f; // et emprunte celle de son voisin de droite
+			p->ph[i].r_f = &p->ph[0].l_f;
 		else
-			p->ph[i].r_f = &p->ph[i + 1].l_f; // et emprunte celle de son voisin de droite
+			p->ph[i].r_f = &p->ph[i + 1].l_f;
 		i++;
 	}
 	return (1);

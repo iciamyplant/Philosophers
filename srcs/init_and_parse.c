@@ -29,7 +29,7 @@ int		numeric(char **argv, int i, int j)
 		while (argv[j][i])
 		{
 			if (argv[j][i] < '0' || argv[j][i] > '9' || ft_strlen(argv[j]) > 10)
-				return (0); //il y a un caractere autre qu'un chiffre ou plu grand qu'un int
+				return (0);
 			i++;
 		}
 		i = 0;

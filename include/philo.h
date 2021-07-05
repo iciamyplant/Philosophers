@@ -1,4 +1,4 @@
-#ifndef PHILO_H
+# ifndef PHILO_H
 # define PHILO_H
 
 /*
@@ -55,7 +55,6 @@ typedef	struct				s_p
 
 int				parse_args(int argc, char **argv, t_p *p);
 int				initialize(t_p *p);
-void			*thread(void *data);
 int				ft_exit(char *str);
 void			write_status(char *str, t_philo *ph);
 long int		actual_time(void);
@@ -63,7 +62,5 @@ void			ft_putstr_fd(char *s, int fd);
 void			ft_usleep(long int time_in_ms);
 int				threading(t_p *p);
 void			activity(t_philo *ph);
-
-void			ft_putnbr_fd(long int ln, int fd);
 
 #endif

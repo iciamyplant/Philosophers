@@ -11,7 +11,6 @@ void	*is_dead(void	*data)
 		pthread_mutex_lock(&ph->pa->write_mutex);
 		write_status("died\n", ph);
 		ph->pa->stop = 1;
-		//ft_usleep(1000);
 		pthread_mutex_unlock(&ph->pa->write_mutex);
 	}
 	return NULL;
@@ -27,20 +26,17 @@ void	*thread(void *data)
 	while (!ph->pa->stop)
 	{
 		pthread_create(&ph->thread_death_id, NULL, is_dead, data);
-		activity(ph); // eat, sleep and think 1 time
+		activity(ph);
 		pthread_detach(ph->thread_death_id);
 		if ((int)++ph->nb_eat == ph->pa->m_eat)
 		{
-			//printf("tread fini 1 ???\n");
 			ph->finish = 1;
 			ph->pa->nb_p_finish++;
 			if (ph->pa->nb_p_finish == ph->pa->total)
 				ph->pa->stop = 2;
 			break;
 		}
-		//printf("-------------------------------CA RENTRE pour philo %d ou ph->nb_eat = %d et ph->pa->m_eat = %d\n", ph->id, ph->nb_eat, ph->pa->m_eat);
 	}
-	//printf("tread fini ???\n");
 	return (NULL);
 }
 

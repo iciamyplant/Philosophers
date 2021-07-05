@@ -49,4 +49,18 @@ while (i < p->a.total)
 			p->ph[i].r_f = &p->ph[i + 1].l_f;       // et emprunte celle de son voisin de droite
 		i++;
 }
-  ```
+```
+
+```
+long int		actual_time(void)
+{
+	long int			time;
+	struct timeval		current_time;
+
+	time = 0;
+	if (gettimeofday(&current_time, NULL) == -1)
+		ft_exit("Gettimeofday returned -1\n");
+	time = (current_time.tv_sec * 1000) + (current_time.tv_usec / 1000); //temps en millisecondes
+	return (time);
+}
+```

@@ -7,6 +7,7 @@
 - Etape 4 - Gestion du temps
 - Etape 5 - Leaks, segfaults et data races
 - Etape 6 - Tests
+- Utilites des variables dans ma structure et culture g prog parallèle
 
 # Etape 1: Bien comprendre le sujet
 Objectif : ne pas faire mourir les philosophes
@@ -107,18 +108,18 @@ Donc :
 - On utilise aussi un mutex partagé par tous les philosophes qui permet de print du texte sans mélange comme dans l'exemple au dessus.
 
 
-[Tuto que j'ai utilise pour commencer](https://www.youtube.com/watch?v=o_GbRujGCnM&t=377s)
+[Tuto video que j'ai utilise pour commencer](https://www.youtube.com/watch?v=o_GbRujGCnM&t=377s)
 
 
 # Etape 3: Stratégie
 
-- Faire partir les nombres pairs avec du retard. Car si tous les philosophes commencent en meme temps et prennent leur fourchette droite personne ne pourra manger.
+- Faire partir les philos pairs ou impairs avec du retard. Car si tous les philosophes commencent en meme temps et prennent leur fourchette droite personne ne pourra manger.
 ```
 	if (ph->id % 2 == 0)
 		ft_usleep(ph->pa->eat / 10);
 ```
 
-- Chaque philosophe a sa propre fourchette à gauche (l_f) et emprunte celle de son voisin a droite grache au pointeur (\*r_f) qui pointe sur la l_f du voisin de droite :
+- Chaque philosophe a sa propre fourchette à gauche (l_f) et emprunte celle de son voisin a droite grace au pointeur (\*r_f) qui pointe sur la l_f du voisin de droite :
 
 ```
 while (i < p->a.total)
@@ -133,7 +134,18 @@ while (i < p->a.total)
 }
 ```
 
-- Obligee de checker la mort dans un thread a cote sinon ne se rend pas compte a temps
+- Obligee de checker la mort dans un thread a cote sinon ne se rend pas compte a temps si y en a un qui meurt. Mais par contre si le thread check en continue la si le philo est mort ca baisse trop les perfs. Donc a chaque fois qu'un philo va faire ses activites un thread qui check la mort se lance. Et ce thread va usleep(time_to_die) et ensuite checker si le philo est mort. 
+
+```
+pthread_create(&ph->thread_death_id, NULL, is_dead, data);
+
+void	*is_dead(void	*data)
+{
+	ft_usleep(ph->pa->die + 1);
+	if (!check_death(ph, 0) && !ph->finish && ((actual_time() - ph->ms_eat) \
+		>= (long)(ph->pa->die)))
+		le philo est mort
+```
 
 
 # Etape 4: Gestion du temps
@@ -186,16 +198,16 @@ When these three conditions hold, the order of accesses is non-deterministic, an
 
 Pour corriger les data races : **-g fsanitize=thread**
 
-Message dans le discord : **valgrind --tool=helgrind** ou **valgrind --tool=drd** : si ceux-là renvoient des warnings ou des erreurs, c'est qu'il manque un mutex, ou qu'il est mal utilisé. Il faut vérifier manuellement, mais souvent, c'est signe que le projet n'est pas bon, même s'il semble marcher. 
+Message dans le discord : "**valgrind --tool=helgrind** ou **valgrind --tool=drd** : si ceux-là renvoient des warnings ou des erreurs, c'est qu'il manque un mutex, ou qu'il est mal utilisé. Il faut vérifier manuellement, mais souvent, c'est signe que le projet n'est pas bon, même s'il semble marcher."
 
-detache : des que le thread se finis sa memoire est clean. Attention a ce que le main ne se finisse pas avant qu'on est finis le thread
-joignable : ne detruit pas sa memoire quand il a finit. pthread_join bloque jusqua ce que le thread soit finis
+- detache : des que le thread se finis sa memoire est clean. Attention a ce que le main ne se finisse pas avant qu'on est finis le thread
+- joignable : ne detruit pas sa memoire quand il a finit. pthread_join bloque jusqu'a ce que le thread soit finis
 
 
 
 # Etape 6: Tests
 
-Forcement si on make avec fsanitize ou valgrind ca fonctionne moins bien
+Avec fsanitize ou valgrind y a des moins bonnes perf bien sur
 
 | test | resultat attendu |
 |----------|-------|
@@ -206,16 +218,40 @@ Forcement si on make avec fsanitize ou valgrind ca fonctionne moins bien
 | ./philo 4 410 200 200 | personne ne meurt |
 | ./philo 4 310 200 200 | un philo meurt |
 | ./philo 4 500 200 1.2 | argument invalide |
+| ./philo 4 0 200 200 | argument invalide|
 | ./philo 4 -500 200 200 | argument invalide |
 | ./philo 4 500 200 2147483647 | un philo meurt au bout de 500 ms |
+| ./philo 4 2147483647 200 200 | personne ne meurt |
+| ./philo 4 214748364732 200 200 | argument invalide|
+| ./philo 4 200 210 200 | un philo meurt, il faut afficher la mort avant 210 ms |
 
 
 
+# Utilites des variables dans ma structure et culture g prog parallèle
 
----------------
+
+**Programmation séquentielle** (ou linéaire) vs **programmation parallèle** :
+Lorsque vous programmez vous faites de la programmation dite linéaire. Cette technique consiste à exécuter les instructions les unes après les autres afin d'obtenir le résultat souhaité. Lorsque au moins deux actions se déroulent en parallèle on parlera d’algorithme parallèle.
+
+**Les architectures :**
+- Les clusters de calcul (OCCIGEN (calculateur développé par atos), Turing (raspberry pi clusters), Muse) : (=grappe de serveurs, cluster, ferme de calcul, computer cluster) pour désigner des techniques consistant à regrouper plusieurs ordinateurs indépendants appelés nœuds, afin de permettre une gestion globale et de dépasser les limitations d'un ordinateur. Un groupe de serveurs mais vu de l'extérieur comme un seul serveur. Le cluster répond au besoin des demandes de traitement des applications en hausse, une demande forte de haute disponibilité des applications. Ex : le cluster actif/passif permet de doubler un serveur avec un deuxième serveur similaire en cas de panne. Permet de repartir la charge entre les serveurs.
+- Les grilles informatique (France Grille) : réseau de ressources informatiques qui se transmettent des données.
+- Les accélérateurs matériels (XeonPhi, GPU) : L'accélération matérielle consiste à confier une fonction spécifique effectuée par le processeur à un circuit intégré (= une puce electronique) dédié qui effectuera cette fonction de façon plus efficace. Pendant longtemps, les calculs effectués par les ordinateurs grand public étaient entièrement pris en charge par le processeur central (CPU). Or, ce processeur s'avérait insuffisant dans un certain nombre de domaines. On eut l'idée de créer des circuits plus efficaces que le processeur pour ces tâches afin de le décharger.
+- machines vectorielles : Un processeur vectoriel est un processeur possédant diverses fonctionnalités architecturales lui permettant d'améliorer l’exécution de programmes utilisant massivement des tableaux, des matrices, et qui permet de profiter du parallélisme inhérent à l'usage de ces derniers.
+- Les multi-coeurs
+
+**Les méthodes de parallélisation :**
+- Le calcul réparti
+- Le calcul en mémoire partagée (Multithread) : a pour but d'augmenter l'utilisation d'un seul cœur en tirant profit des propriétés des threads et du parallélisme au niveau des instructions. Contrairement aux processus, les threads partagent la mémoire du processus qui les contient, ce qui rend les changements de contexte peu coûteux en temps. Un thread est donc un fil d'exécution, une tâche que doit exécuter le processeur. Un cœur ne peut exécuter qu'un seul thread à la fois. Donc, si un processeur a deux cœurs, deux threads (deux tâches) peuvent être exécutées simultanément et ainsi de suite.
+- Le calcul en mémoire distribuée (MPI = Multiprocessing)
+
+**Les erreurs classiques de la programmation parallèle**
+- data race
+- défaut de synchronisation
+- incohérence des données
 
 
-  ```
+```
  typedef	struct        s_arg             //arguments after ./philo
 {
 	int                   total;            // number of philosophers

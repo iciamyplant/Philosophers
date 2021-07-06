@@ -1,4 +1,7 @@
-# Philosophers
+### Lancement :
+  ```
+make && ./philo arg1 arg2 arg3 arg4 arg5
+  ```
 
 ### Plan :
 - Etape 1 - Bien comprendre le sujet

@@ -14,7 +14,7 @@ Objectif : ne pas faire mourir les philosophes
 - chaque philosophe est un **thread**, et chaque fourchette est un **mutex**
 - ils font dans l'ordre : manger - dormir - penser (ils pensent pas vraiment, ils attendent d'avoir leurs fourchettes pour manger)
 - pour manger ils doivent avoir deux fourchettes, sachant que y a que une fourchette par philosophe
-- si y en a un qui meurt la simulation s'arrête et on doit afficher la mort dans maximum 10 ms
+- si y en a un qui meurt la simulation s'arrête et on doit afficher la mort dans maximum 10 millisecondes
 - ecrire chaque changement de statut de philosophe
 
 ./philo arg1 arg2 arg3 arg4 arg5
@@ -33,20 +33,92 @@ Philo_bonus (=philo_three) : processus et semaphores.
 
 # Etape 2: Se familiariser avec les threads et les mutex
 
-Thread : chaque thread comprend ces éléments uniques. Et partage avec tous les autres threads du même processus : code section, data section, operating-system ressources comme les open files et les signals. Les processus contiennent toujours au moins un thread.
+Thread : Y a toujours au minimum un thread par processus. Mais on peut en creer plus, et chaque thread comprend ces éléments uniques et ses elements partages avec tous les autres threads du meme processus (code section, data section, operating-system ressources comme les open files et les signals)... 
 
-Faire le truc des printfs qui s'entre-melent pas
+La librairies qui permettent de gerer les threads : pthread et openmp
+
+```
+pthread_create(&p->ph[i].thread_id, NULL, thread, &p->ph[i]); //pour creer un thread avec pthread
+```
+
+Mais si deux threads d'un meme processus veulent acceder a la meme variable de la memoire partagee au meme moment ca cree des comportements indefinis (voir data races en dessous). D'ou l'utilisation de mutexs. Les mutexs bloquent un bout de code, et les autres threads doivent attendre pour executer ce bout de code. Comme une clé des toillettes, chacun son tour.
+
+Exemple ici si on enleve les mutex str imprimee par thread 1 est chevauchee par str imprimee par le thread 2 et ca fera "treatdr e1a d:  1c o:u ccoouu ccoau  cvaa  v?a" :
+
+```
+#include <pthread.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+
+//pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+typedef	struct              s_p
+{
+    pthread_mutex_t         mutex;
+    int                     i;
+}                           t_p;
+
+int ft_strlen(char *str)
+{
+    int i = 0;
+    while (str[i])
+        i++;
+    return (i);
+}
+
+void    *go1(void *pp)
+{
+    char *str;
+    int i = 0;
+    t_p *ppp;
+
+    ppp = (t_p *)pp;
+    str = "tread 1 : coucou ca va ? \n";
+    pthread_mutex_lock(&ppp->mutex); // si on enleve ici
+    while (str[i])
+    {
+        write(1, &str[i], 1);
+        i++;
+    }
+    pthread_mutex_unlock(&ppp->mutex); // si on enleve ici
+    return (NULL);
+}
+
+int main()
+{
+    pthread_t               thread_id1;
+    pthread_t               thread_id2;
+    t_p                     p;
+    t_p                     *pp;
+
+    pp = (malloc(sizeof(t_p) * 1));
+    pp = &p;
+    p.i = 3;
+
+    pthread_mutex_init(&p.mutex, NULL);			// obligatoire de init le mutex
+    pthread_create(&thread_id1, NULL, go1, (void *)pp);
+    pthread_create(&thread_id2, NULL, go1, (void *)pp);
+    sleep(1);
+}
+```
+
+Donc : 
+- Chaque fourchette a son propre mutex qui permet de la verrouiller lorsqu'un philosophe la prend.
+- On utilise aussi un mutex partagé par tous les philosophes qui permet de print du texte sans mélange comme dans l'exemple au dessus.
+
+
+[Tuto que j'ai utilise pour commencer](https://www.youtube.com/watch?v=o_GbRujGCnM&t=377s)
 
 
 # Etape 3: Stratégie
 
-- faire partir les nombres pairs avec du retard. Car si tous les philosophes commencent en meme temps et prennent leur fourchette droite personne ne pourra manger.
+- Faire partir les nombres pairs avec du retard. Car si tous les philosophes commencent en meme temps et prennent leur fourchette droite personne ne pourra manger.
 ```
 	if (ph->id % 2 == 0)
 		ft_usleep(ph->pa->eat / 10);
 ```
 
-- chaque philosophe a sa propre fourchette à gauche (l_f) et emprunte celle de son voisin a droite grache au pointeur (\*r_f) qui pointe sur la l_f du voisin de droite :
+- Chaque philosophe a sa propre fourchette à gauche (l_f) et emprunte celle de son voisin a droite grache au pointeur (\*r_f) qui pointe sur la l_f du voisin de droite :
 
 ```
 while (i < p->a.total)
@@ -61,9 +133,22 @@ while (i < p->a.total)
 }
 ```
 
-- expliquer comment check la mort
+- Obligee de checker la mort dans un thread a cote sinon ne se rend pas compte a temps
+
 
 # Etape 4: Gestion du temps
+
+| seconde | milliseconde | microseconde |
+|----------|-------|-------|
+| 1 | 1000 | 1e+6 |
+| 0,001 | 1 | 1000 |
+
+- Fonctionnement de gettimeofday :
+```
+   struct timeval current_time;
+   gettimeofday(&current_time, NULL);
+   printf("seconds : %ld\nmicro seconds : %d", current_time.tv_sec, current_time.tv_usec);
+```
 
 - Pour connaitre le temps actuel en millisecondes avec gettimeofday :
 ```
@@ -103,14 +188,31 @@ Pour corriger les data races : **-g fsanitize=thread**
 
 Message dans le discord : **valgrind --tool=helgrind** ou **valgrind --tool=drd** : si ceux-là renvoient des warnings ou des erreurs, c'est qu'il manque un mutex, ou qu'il est mal utilisé. Il faut vérifier manuellement, mais souvent, c'est signe que le projet n'est pas bon, même s'il semble marcher. 
 
+detache : des que le thread se finis sa memoire est clean. Attention a ce que le main ne se finisse pas avant qu'on est finis le thread
+joignable : ne detruit pas sa memoire quand il a finit. pthread_join bloque jusqua ce que le thread soit finis
+
+
+
 # Etape 6: Tests
 
 Forcement si on make avec fsanitize ou valgrind ca fonctionne moins bien
 
-./philo 1 200 200 200
+| test | resultat attendu |
+|----------|-------|
+| ./philo 1 200 200 200 | philo 1 ne prend qu'une fourchette et meurt au bout de 200 ms |
+| ./philo 2 800 200 200 | personne ne meurt |
+| ./philo 5 800 200 200 | personne ne meurt |
+| ./philo 5 800 200 200 7 | la simulation s'arrete quand chaque philo a mange 7 fois|
+| ./philo 4 410 200 200 | personne ne meurt |
+| ./philo 4 310 200 200 | un philo meurt |
+| ./philo 4 500 200 1.2 | argument invalide |
+| ./philo 4 -500 200 200 | argument invalide |
+| ./philo 4 500 200 2147483647 | un philo meurt au bout de 500 ms |
 
 
 
+
+---------------
 
 
   ```

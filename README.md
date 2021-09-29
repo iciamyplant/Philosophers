@@ -93,15 +93,12 @@ int main()
     pthread_t               thread_id1;
     pthread_t               thread_id2;
     t_p                     p;
-    t_p                     *pp;
 
-    pp = (malloc(sizeof(t_p) * 1));
-    pp = &p;
     p.i = 3;
 
     pthread_mutex_init(&p.mutex, NULL);			// obligatoire de init le mutex
-    pthread_create(&thread_id1, NULL, go1, (void *)pp);
-    pthread_create(&thread_id2, NULL, go1, (void *)pp);
+    pthread_create(&thread_id1, NULL, go1, (void *)&p);
+    pthread_create(&thread_id2, NULL, go1, (void *)&p);
     sleep(1);
 }
 ```
